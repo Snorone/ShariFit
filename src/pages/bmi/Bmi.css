@@ -1,0 +1,76 @@
+.bmi-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 2rem;
+  }
+  
+  .bmi-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 320px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .bmi-card label {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+  }
+  
+  .bmi-card input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-top: 0.3rem;
+  }
+  
+  .bmi-card button {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .bmi-card button:hover {
+    background-color: #0056b3;
+  }
+  
+  .bmi-result {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 6px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .bmi-result.undervikt {
+    background-color: #f0f8ff;
+    color: #0077b6;
+  }
+  
+  .bmi-result.normalvikt {
+    background-color: #e7f9ed;
+    color: #2a9d8f;
+  }
+  
+  .bmi-result.övervikt {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  .bmi-result.fetma {
+    background-color: #fdecea;
+    color: #d32f2f;
+  }
+  
