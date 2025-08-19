@@ -30,8 +30,6 @@ export default function Layout({ children }: LayoutProps) {
 
         <nav className={`app-nav ${menuOpen ? "open" : ""}`}>
   <NavLink to="/" onClick={() => setMenuOpen(false)}>Start</NavLink>
-  {/* <NavLink to="/jamfor" onClick={() => setMenuOpen(false)}>Quick compare</NavLink>
-  <NavLink to="/tavlingar" onClick={() => setMenuOpen(false)}>Competitions</NavLink> */}
   <NavLink to="/profile" onClick={() => setMenuOpen(false)}>My Profile</NavLink>
 </nav>
       </header>
