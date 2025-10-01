@@ -1,0 +1,67 @@
+.admin-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .exercise-form {
+    background: #f4f4f4;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+  
+  .exercise-form input,
+  .exercise-form textarea,
+  .exercise-form select {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.8rem;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  
+  .btn-primary {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .btn-primary:hover {
+    background: #0056b3;
+  }
+  
+  .exercise-list {
+    display: grid;
+    gap: 1rem;
+  }
+  
+  .exercise-item {
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-radius: 6px;
+    background: white;
+  }
+  
+  .btn-approve {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .btn-approve:hover {
+    background: #1e7e34;
+  }
+  

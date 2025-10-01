@@ -2,7 +2,8 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;   
-  background-image: url("public/gymbg.png"); /* byt till din riktiga bild */
+  /* background-image: url("/gymbg.png");  */
+  background-color: white;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -11,7 +12,6 @@ body {
   padding: 0;
 }
 
-/* Se till att html, body och #root fyller hela sidan */
 html, body, #root {
   height: 100%;
   width: 100%;
@@ -32,7 +32,6 @@ main {
   }
   .app-header {
     background: rgb(53, 47, 77);
-    /* background-image: url(../../public/gymbg.png); */
     color: #fff;
     padding: 1.2rem ;
     border-radius: 0 0 8px 8px;

@@ -1,6 +1,7 @@
 // src/utils/createUserIfNotExists.ts
 import { doc, getDoc, setDoc, collection, addDoc } from "firebase/firestore";
 import { db, auth } from "../firebase/config";
+import { EXERCISES_COLLECTION } from "./db-collection";
 
 export const createUserIfNotExists = async () => {
   if (!auth.currentUser) return;
@@ -20,7 +21,7 @@ export const createUserIfNotExists = async () => {
     console.log("✅ User document created!");
 
     // Skapa några testövningar
-    const exercisesRef = collection(db, "users", userId, "exercises");
+    const exercisesRef = collection(db, "users", userId, EXERCISES_COLLECTION);
     await addDoc(exercisesRef, {
       name: "Bänkpress",
       sets: 3,

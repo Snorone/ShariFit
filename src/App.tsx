@@ -6,6 +6,8 @@ import Layout from "./layout/Layout";
 import { AuthProvider } from "./context/AuthContext";
 import Bmi from "./pages/bmi/Bmi";
 import Exercises from "./pages/exercises/Exercises";
+import AdminPage from "./pages/admin/adminPage";
+import AdminRoute from "./components/adminRoute";
 
 function App() {
   return (
@@ -18,7 +20,12 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/bmi" element={<Bmi />} />
             <Route path="/exercises" element={<Exercises />} />
-
+            <Route path="/admin" element={
+               <AdminRoute>
+                 <AdminPage />
+               </AdminRoute>
+               }
+            />
           </Routes>
         </Layout>
       </AuthProvider>

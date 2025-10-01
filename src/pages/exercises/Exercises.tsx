@@ -1,115 +1,149 @@
-// src/pages/Exercises.tsx
-import { useState, useEffect } from "react";
-import { collection, addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore";
-import { db } from "../../firebase/config";
-import { useAuth } from "../../context/AuthContext";
+import React, { useEffect, useState, FormEvent } from "react";
+import { db, auth } from "../../firebase/config";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  orderBy,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
+import { Role, useAuth } from "../../context/AuthContext";
+import { createExercise } from "../../firebase/dbFunctions";
+import { Exercise } from "../../types";
 import "./Exercises.css";
+import {
+  APPROVED_FIELD,
+  CREATED_AT_FIELD,
+  DESCENDIN_BY_FIELD,
+  EXERCISES_COLLECTION,
+} from "../../utils/db-collection";
 
-interface Exercise {
-  id: string;
+interface NewExercise {
   name: string;
-  sets: number;
-  reps: number;
-  weight: number;
-  date: string;
+  description: string;
+  muscleGroup: string;
+  type: "strength" | "cardio";
 }
 
-export default function Exercises() {
-  const { user } = useAuth();
+export default function ExercisesPage() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [name, setName] = useState("");
-  const [sets, setSets] = useState<number>(0);
-  const [reps, setReps] = useState<number>(0);
-  const [weight, setWeight] = useState<number>(0);
+  const [newExercise, setNewExercise] = useState<NewExercise>({
+    name: "",
+    description: "",
+    muscleGroup: "",
+    type: "strength",
+  });
 
-  // Hämta övningar från Firestore i realtid
+  const { user } = useAuth();
+
+  if (user === null) {
+    return <div>No user signed in.</div>;
+  }
+  const isAdmin = user.role === Role.ADMIN;
+
+  // 🔹 Hämta övningar i realtid
   useEffect(() => {
-    if (!user) return;
+    const q = isAdmin
+      ? query(
+          collection(db, EXERCISES_COLLECTION),
+          orderBy(CREATED_AT_FIELD, DESCENDIN_BY_FIELD)
+        )
+      : query(
+          collection(db, EXERCISES_COLLECTION),
+          where(APPROVED_FIELD, "==", true),
+          orderBy(CREATED_AT_FIELD, DESCENDIN_BY_FIELD)
+        );
 
-    const exercisesRef = collection(db, "users", user.uid, "exercises");
-
-    const unsubscribe = onSnapshot(exercisesRef, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...(doc.data() as Omit<Exercise, "id">),
-      }));
-      setExercises(data);
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setExercises(
+        snapshot.docs.map(
+          (docSnap) =>
+            ({
+              id: docSnap.id,
+              ...docSnap.data(),
+            } as Exercise)
+        )
+      );
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, [isAdmin]);
 
-  // Lägg till ny övning
-  const handleAddExercise = async () => {
-    if (!user || !name || sets <= 0 || reps <= 0 || weight < 0) return;
+  // 🔹 Skapa övning
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!newExercise.name) return alert("Ange ett namn på övningen!");
+    if (!user) return alert("Du måste vara inloggad för att skapa övningar!");
 
-    const exercisesRef = collection(db, "users", user.uid, "exercises");
+    try {
+      await createExercise({
+        name: newExercise.name,
+        description: newExercise.description,
+        muscleGroup: newExercise.muscleGroup,
+        type: newExercise.type,
+        approved: false,
+        createdBy: user.uid,
+        createdAt: new Date().toISOString(),
+      });
 
-    await addDoc(exercisesRef, {
-      name,
-      sets,
-      reps,
-      weight,
-      date: new Date().toISOString().split("T")[0],
-    });
-
-    // Rensa formuläret
-    setName("");
-    setSets(0);
-    setReps(0);
-    setWeight(0);
+      setNewExercise({
+        name: "test",
+        description: "test",
+        muscleGroup: "test",
+        type: "strength",
+      });
+    } catch (err) {
+      console.error("Fel vid skapande av övning:", err);
+      alert("Något gick fel, försök igen!");
+    }
   };
 
-  // Ta bort övning
-  const handleDeleteExercise = async (id: string) => {
-    if (!user) return;
-    await deleteDoc(doc(db, "users", user.uid, "exercises", id));
+  // 🔹 Godkänn övning (endast admin)
+  const handleApprove = async (exerciseId: string) => {
+    try {
+      const ref = doc(db, EXERCISES_COLLECTION, exerciseId);
+      await updateDoc(ref, {
+        approved: true,
+        approvedBy: user?.uid,
+        approvedAt: new Date(),
+      });
+    } catch (err) {
+      console.error("Kunde inte godkänna:", err);
+    }
   };
 
   return (
-    <div className="exercises-container">
-      <h1 className="exercises-title">Mina Övningar</h1>
+    <div className="exercises-page">
+      <h1 className="page-title">Övningar</h1>
 
-      {/* Formulär för ny övning */}
-      <div className="exercise-form">
-        <input
-          type="text"
-          placeholder="Övningens namn"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Set"
-          value={sets || ""}
-          onChange={(e) => setSets(Number(e.target.value))}
-        />
-        <input
-          type="number"
-          placeholder="Reps"
-          value={reps || ""}
-          onChange={(e) => setReps(Number(e.target.value))}
-        />
-        <input
-          type="number"
-          placeholder="Vikt (kg)"
-          value={weight || ""}
-          onChange={(e) => setWeight(Number(e.target.value))}
-        />
-        <button onClick={handleAddExercise}>Lägg till</button>
-      </div>
-
-      {/* Lista med övningar */}
-      <ul className="exercise-list">
-        {exercises.map((exercise) => (
-          <li key={exercise.id} className="exercise-item">
-            <span>
-              <strong>{exercise.name}</strong> – {exercise.sets} set × {exercise.reps} reps – {exercise.weight} kg ({exercise.date})
-            </span>
-            <button onClick={() => handleDeleteExercise(exercise.id)}>Ta bort</button>
-          </li>
+      {/* Lista */}
+      <div className="exercise-list">
+        {exercises.map((ex) => (
+          <div key={ex.id} className="exercise-item">
+            <h3>{ex.name}</h3>
+            <p className="exercise-desc">{ex.description}</p>
+            <p>
+              Muskelgrupp: <strong>{ex.muscleGroup}</strong>
+            </p>
+            <p>Typ: {ex.type}</p>
+            {!ex.approved && (
+              <div className="pending">
+                <p className="pending-text">⏳ Väntar på godkännande</p>
+                {isAdmin && (
+                  <button
+                    onClick={() => handleApprove(ex.id)}
+                    className="btn-approve"
+                  >
+                    Godkänn
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
