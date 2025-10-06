@@ -76,28 +76,18 @@ export default function ExercisesPage() {
     e.preventDefault();
     if (!newExercise.name) return alert("Ange ett namn på övningen!");
     if (!user) return alert("Du måste vara inloggad för att skapa övningar!");
-
-    try {
-      await createExercise({
-        name: newExercise.name,
-        description: newExercise.description,
-        muscleGroup: newExercise.muscleGroup,
-        type: newExercise.type,
-        approved: false,
-        createdBy: user.uid,
-        createdAt: new Date().toISOString(),
-      });
-
-      setNewExercise({
-        name: "test",
-        description: "test",
-        muscleGroup: "test",
-        type: "strength",
-      });
-    } catch (err) {
+    await createExercise({
+      name: newExercise.name,
+      description: newExercise.description,
+      muscleGroup: newExercise.muscleGroup,
+      type: newExercise.type,
+      createdBy: user.uid,
+      createdAt: new Date().toISOString(),
+    }).catch((err) => {
       console.error("Fel vid skapande av övning:", err);
       alert("Något gick fel, försök igen!");
-    }
+      throw err;
+    });
   };
 
   // 🔹 Godkänn övning (endast admin)
@@ -114,11 +104,133 @@ export default function ExercisesPage() {
     }
   };
 
+  //   return (
+  //     <div className="exercises-page">
+  //       <h1 className="page-title">Övningar</h1>
+
+  //       {/* Formulär */}
+  //       <form onSubmit={handleSubmit} className="exercise-form">
+  //         <h2>Lägg till ny övning</h2>
+  //         <input
+  //           type="text"
+  //           placeholder="Namn"
+  //           value={newExercise.name}
+  //           onChange={(e) =>
+  //             setNewExercise({ ...newExercise, name: e.target.value })
+  //           }
+  //         />
+  //         <textarea
+  //           placeholder="Beskrivning"
+  //           value={newExercise.description}
+  //           onChange={(e) =>
+  //             setNewExercise({ ...newExercise, description: e.target.value })
+  //           }
+  //         />
+  //         <input
+  //           type="text"
+  //           placeholder="Muskelgrupp"
+  //           value={newExercise.muscleGroup}
+  //           onChange={(e) =>
+  //             setNewExercise({ ...newExercise, muscleGroup: e.target.value })
+  //           }
+  //         />
+  //         <select
+  //           value={newExercise.type}
+  //           onChange={(e) =>
+  //             setNewExercise({
+  //               ...newExercise,
+  //               type: e.target.value as "strength" | "cardio",
+  //             })
+  //           }
+  //         >
+  //           <option value="strength">Styrka</option>
+  //           <option value="cardio">Cardio</option>
+  //         </select>
+  //         <button type="submit" className="btn-primary">
+  //           Spara övning
+  //         </button>
+  //       </form>
+
+  //       {/* Lista */}
+  //       <div className="exercise-list">
+  //         {exercises.map((ex) => (
+  //           <div key={ex.id} className="exercise-item">
+  //             <h3>{ex.name}</h3>
+  //             <p className="exercise-desc">{ex.description}</p>
+  //             <p>
+  //               Muskelgrupp: <strong>{ex.muscleGroup}</strong>
+  //             </p>
+  //             <p>Typ: {ex.type}</p>
+  //             {!ex.approved && (
+  //               <div className="pending">
+  //                 <p className="pending-text">⏳ Väntar på godkännande</p>
+  //                 {isAdmin && (
+  //                   <button
+  //                     onClick={() => handleApprove(ex.id)}
+  //                     className="btn-approve"
+  //                   >
+  //                     Godkänn
+  //                   </button>
+  //                 )}
+  //               </div>
+  //             )}
+  //           </div>
+  //         ))}
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
   return (
     <div className="exercises-page">
       <h1 className="page-title">Övningar</h1>
 
-      {/* Lista */}
+      {/* ✅ Visa formuläret endast för admin */}
+      {isAdmin && (
+        <form onSubmit={handleSubmit} className="exercise-form">
+          <h2>Lägg till ny övning</h2>
+          <input
+            type="text"
+            placeholder="Namn"
+            value={newExercise.name}
+            onChange={(e) =>
+              setNewExercise({ ...newExercise, name: e.target.value })
+            }
+          />
+          <textarea
+            placeholder="Beskrivning"
+            value={newExercise.description}
+            onChange={(e) =>
+              setNewExercise({ ...newExercise, description: e.target.value })
+            }
+          />
+          <input
+            type="text"
+            placeholder="Muskelgrupp"
+            value={newExercise.muscleGroup}
+            onChange={(e) =>
+              setNewExercise({ ...newExercise, muscleGroup: e.target.value })
+            }
+          />
+          <select
+            value={newExercise.type}
+            onChange={(e) =>
+              setNewExercise({
+                ...newExercise,
+                type: e.target.value as "strength" | "cardio",
+              })
+            }
+          >
+            <option value="strength">Styrka</option>
+            <option value="cardio">Cardio</option>
+          </select>
+          <button type="submit" className="btn-primary">
+            Spara övning
+          </button>
+        </form>
+      )}
+
+      {/* Lista över övningar */}
       <div className="exercise-list">
         {exercises.map((ex) => (
           <div key={ex.id} className="exercise-item">

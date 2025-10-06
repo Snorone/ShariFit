@@ -33,13 +33,12 @@ const Profile = () => {
           <button onClick={() => navigate("/exercises")}>
             📋 Mina övningar
           </button>
+          <button onClick={() => navigate("/meals")}> Mina måltider</button>
           <button onClick={() => navigate("/bmi")}>📊 BMI & hälsa</button>
 
           {/* 👇 Bara admin ser den här knappen */}
           {isAdmin && (
-            <button onClick={() => navigate("/admin")}>
-              🔑 Adminpanel
-            </button>
+            <button onClick={() => navigate("/admin")}>🔑 Adminpanel</button>
           )}
 
           <button onClick={handleLogout}>🚪 Logga ut</button>

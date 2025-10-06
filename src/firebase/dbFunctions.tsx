@@ -14,7 +14,6 @@ interface ExerciseInput {
   description: string;
   muscleGroup: string;
   type: string;
-  approved: boolean;
   createdBy: string;
   createdAt: string;
 }
@@ -35,7 +34,6 @@ export async function createExercise({
     muscleGroup,
     type,
     createdBy: uid,
-    approved: false,
     createdAt: serverTimestamp(),
   });
 }
@@ -100,6 +98,28 @@ export async function addLog(
     weight,
     duration,
     date,
+    createdAt: serverTimestamp(),
+  });
+}
+
+interface MealsInput {
+  name: string;
+  description: string;
+  calories: number;
+  createdBy: string;
+  createdAt: string;
+}
+
+export async function createMeal({ name, description, calories }: MealsInput) {
+  if (!auth.currentUser) {
+    throw new Error("User is not authenticated.");
+  }
+  const uid = auth.currentUser.uid;
+  return await addDoc(collection(db, "meals"), {
+    name,
+    description,
+    calories,
+    createdBy: uid,
     createdAt: serverTimestamp(),
   });
 }
