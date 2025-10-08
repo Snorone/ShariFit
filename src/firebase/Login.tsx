@@ -13,10 +13,11 @@ const Login = () => {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
+      const loggedInUser = result.user;
       console.log("Inloggad som:", result.user.displayName);
 
       // ✅ Skapa användardokument och testdata
-      await createUserIfNotExists();
+      await createUserIfNotExists(loggedInUser);
     } catch (error) {
       console.error("Inloggning misslyckades:", error);
     }
@@ -32,7 +33,9 @@ const Login = () => {
   };
 
   return user ? (
-    <Mainbutton onClick={handleLogout}>Logga ut ({user.displayName})</Mainbutton>
+    <Mainbutton onClick={handleLogout}>
+      Logga ut ({user.displayName})
+    </Mainbutton>
   ) : (
     <Mainbutton onClick={handleLogin}>Logga in med Google</Mainbutton>
   );

@@ -20,7 +20,7 @@ import {
   MEALS_COLLECTION,
 } from "../../utils/db-collection";
 
-export default function Meals() {
+export default function createMeals() {
   const [meals, setMeals] = useState<Mealsen[]>([]);
   const [newMeal, setNewMeal] = useState<NewMeal>({
     name: "",
@@ -36,55 +36,38 @@ export default function Meals() {
   const isAdmin = user.role === Role.ADMIN;
 
   useEffect(() => {
-    const q = isAdmin
-      ? query(
-          collection(db, MEALS_COLLECTION),
-          orderBy(CREATED_AT_FIELD, DESCENDIN_BY_FIELD)
-        )
-      : query(
-          collection(db, MEALS_COLLECTION),
-          //   where(APPROVED_FIELD, "==", true),
-          orderBy(CREATED_AT_FIELD, DESCENDIN_BY_FIELD)
-        );
+    const q = query(
+      collection(db, MEALS_COLLECTION),
+      orderBy(CREATED_AT_FIELD, DESCENDIN_BY_FIELD)
+    );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setMeals(
-        snapshot.docs.map(
-          (docSnap) =>
-            ({
-              id: docSnap.id,
-              ...docSnap.data(),
-            } as Mealsen)
-        )
+        snapshot.docs.map((docSnap) => ({
+          id: docSnap.id,
+          ...docSnap.data(),
+        })) as Mealsen[]
       );
     });
 
     return () => unsubscribe();
-  }, [isAdmin]);
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!newMeal.name) return alert("Ange ett namn på övningen!");
     if (!user) return alert("Du måste vara inloggad för att skapa övningar!");
-
-    try {
-      await createMeal({
-        name: newMeal.name,
-        description: newMeal.description,
-        calories: newMeal.calories,
-        createdBy: user.uid,
-        createdAt: new Date().toISOString(),
-      });
-
-      setNewMeal({
-        name: "test",
-        description: "test",
-        calories: 100,
-      });
-    } catch (err) {
+    await createMeal({
+      name: newMeal.name,
+      description: newMeal.description,
+      calories: newMeal.calories,
+      createdBy: user.uid,
+      createdAt: new Date().toISOString(),
+    }).catch((err) => {
       console.error("Fel vid skapande av måltid:", err);
       alert("Något gick fel, försök igen!");
-    }
+      throw err;
+    });
   };
 
   return (
@@ -119,18 +102,6 @@ export default function Meals() {
           </button>
         </form>
       )}
-      {/* Lista */}
-      <div className="meals-list">
-        {meals.map((m) => (
-          <div key={m.id} className="meals-item">
-            <h3>{m.name}</h3>
-            <p className="meals-desc">{m.description}</p>
-            <p>
-              Kalorier: <strong>{m.calories}</strong>
-            </p>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

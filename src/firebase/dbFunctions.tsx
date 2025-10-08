@@ -27,7 +27,10 @@ export async function createExercise({
   if (!auth.currentUser) {
     throw new Error("User is not authenticated.");
   }
+
   const uid = auth.currentUser.uid;
+
+  // 🔸 Inget approved-fält längre
   return await addDoc(collection(db, EXERCISES_COLLECTION), {
     name,
     description,
@@ -38,18 +41,10 @@ export async function createExercise({
   });
 }
 
-// 🔹 Godkänn övning (admin)
-export async function approveExercise(exerciseId: string) {
-  const ref = doc(db, EXERCISES_COLLECTION, exerciseId);
-  return await updateDoc(ref, {
-    approved: true,
-    approvedBy: auth.currentUser ? auth.currentUser.uid : null,
-    approvedAt: serverTimestamp(),
-  });
-}
+// ❌ Ta bort hela approveExercise-funktionen
+// (Den behövs inte längre)
 
 // 🔹 Skapa workout
-// Define an interface for the workout input
 interface WorkoutInput {
   name: string;
   description: string;
@@ -66,6 +61,7 @@ export async function createWorkout({
   if (!auth.currentUser) {
     throw new Error("User is not authenticated.");
   }
+
   const uid = auth.currentUser.uid;
   return await addDoc(collection(db, "workouts"), {
     name,
@@ -102,6 +98,7 @@ export async function addLog(
   });
 }
 
+// 🔹 Skapa måltid
 interface MealsInput {
   name: string;
   description: string;
@@ -114,6 +111,7 @@ export async function createMeal({ name, description, calories }: MealsInput) {
   if (!auth.currentUser) {
     throw new Error("User is not authenticated.");
   }
+
   const uid = auth.currentUser.uid;
   return await addDoc(collection(db, "meals"), {
     name,

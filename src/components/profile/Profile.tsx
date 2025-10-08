@@ -33,8 +33,11 @@ const Profile = () => {
           <button onClick={() => navigate("/exercises")}>
             📋 Mina övningar
           </button>
-          <button onClick={() => navigate("/meals")}> Mina måltider</button>
+          <button onClick={() => navigate("/meals")}> 🍽️ Mina måltider</button>
           <button onClick={() => navigate("/bmi")}>📊 BMI & hälsa</button>
+          <button onClick={() => navigate("/workouts")}>
+            🏋️ Mina workouts
+          </button>
 
           {/* 👇 Bara admin ser den här knappen */}
           {isAdmin && (

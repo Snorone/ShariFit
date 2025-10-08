@@ -5,10 +5,10 @@ import Profile from "./components/profile/Profile";
 import Layout from "./layout/Layout";
 import { AuthProvider } from "./context/AuthContext";
 import Bmi from "./pages/bmi/Bmi";
-import Exercises from "./pages/exercises/Exercises";
+import Exercises from "./pages/exercises/ExercisesPage";
 import AdminPage from "./pages/admin/adminPage";
 import AdminRoute from "./components/adminRoute";
-import Meals from "./components/meals/meals";
+import Meals from "./pages/meals/mealspage";
 
 function App() {
   return (

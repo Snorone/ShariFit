@@ -17,8 +17,11 @@ import {
   DESCENDIN_BY_FIELD,
   EXERCISES_COLLECTION,
 } from "../../utils/db-collection";
-import ExercisesPage from "../exercises/Exercises";
-import Meals from "../../components/meals/meals";
+import ExercisesPage from "../exercises/ExercisesPage";
+import CreateMeals from "../../components/meals/createMeals";
+import ShowMeals from "../../components/meals/showMeals";
+import CreateExercise from "../../pages/exercises/createExercise";
+import ShowExercise from "../../pages/exercises/showExercise";
 
 interface NewExercise {
   name: string;
@@ -42,41 +45,21 @@ export default function AdminPage() {
     return <div>No user signed in.</div>;
   }
   const isAdmin = user.role === Role.ADMIN;
-
-  // useEffect(() => {
-  //   if (!isAdmin) return;
-
-  //   const q = query(
-  //     collection(db, EXERCISES_COLLECTION),
-  //     orderBy(CREATED_AT_FIELD, DESCENDIN_BY_FIELD)
-  //   );
-
-  //   const unsubscribe = onSnapshot(q, (snapshot) => {
-  //     setExercises(
-  //       snapshot.docs.map(
-  //         (docSnap) =>
-  //           ({
-  //             id: docSnap.id,
-  //             ...docSnap.data(),
-  //           } as Exercise)
-  //       )
-  //     );
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [isAdmin]);
+  if (!isAdmin) {
+    return <div>Access denied. Admins only.</div>;
+  }
 
   return (
     <div className="admin-page">
       <h1 className="page-title">Adminpanel</h1>
 
-      {/* Lista */}
-
       <div className="exercise-list">
-        <ExercisesPage />
+        <CreateExercise />
+        <ShowExercise />
       </div>
       <div className="exercise-list">
-        <Meals />
+        <CreateMeals />
+        <ShowMeals />
       </div>
     </div>
   );
