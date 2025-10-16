@@ -57,12 +57,11 @@ export default function createMeals() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (!newMeal.name) return alert("Ange ett namn på övningen!");
-    if (!user) return alert("Du måste vara inloggad för att skapa övningar!");
+    if (!newMeal.name) return toast.success("Ange ett namn på övningen!");
+    if (!user)
+      return toast.success("Du måste vara inloggad för att skapa övningar!");
 
     try {
-      console.log("Skickar ny måltid till createMeal...");
-
       await createMeal({
         name: newMeal.name,
         description: newMeal.description,
@@ -80,7 +79,7 @@ export default function createMeals() {
       });
     } catch (err) {
       console.error("Fel vid skapande av måltid:", err);
-      alert("Något gick fel, försök igen!");
+      toast.success("Något gick fel, försök igen!");
     }
   };
 

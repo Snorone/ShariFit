@@ -1,6 +1,7 @@
 import React, { useState, FormEvent } from "react";
 import { createExercise } from "../../firebase/dbFunctions";
 import { useAuth, Role } from "../../context/AuthContext";
+import toast from "react-hot-toast";
 
 interface NewExercise {
   name: string;
@@ -20,25 +21,39 @@ export default function CreateExercise() {
   const { user } = useAuth();
   const isAdmin = user?.role === Role.ADMIN;
 
-  if (!user) return <p>Du måste vara inloggad.</p>;
-  if (!isAdmin) return <p>Endast admin kan skapa övningar.</p>;
+  if (!user)
+    return toast.success("Du måste vara inloggad för att skapa övningar!");
+  if (!isAdmin) return toast.success("Endast admin kan skapa övningar!");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!newExercise.name) return alert("Ange ett namn på övningen!");
-    if (!user) return alert("Du måste vara inloggad för att skapa övningar!");
-    await createExercise({
-      name: newExercise.name,
-      description: newExercise.description,
-      muscleGroup: newExercise.muscleGroup,
-      type: newExercise.type,
-      createdBy: user.uid,
-      createdAt: new Date().toISOString(),
-    }).catch((err) => {
-      console.error("Fel vid skapande av övning:", err);
-      alert("Något gick fel, försök igen!");
+    if (!newExercise.name) return toast.success("Ange ett namn på övningen!");
+    if (!user)
+      return toast.success("Du måste vara inloggad för att skapa övningar!");
+
+    try {
+      await createExercise({
+        name: newExercise.name,
+        description: newExercise.description,
+        muscleGroup: newExercise.muscleGroup,
+        type: newExercise.type,
+        createdBy: user.uid,
+        createdAt: new Date().toISOString(),
+      });
+
+      toast.success("träning skapades!");
+
+      setNewExercise({
+        name: "",1w
+        description: "",
+        muscleGroup: "",
+        type: "strength",
+      });
+    } catch (err) {
+      console.error("Fel vid skapande av exercise:", err);
+      toast.success("Något gick fel, försök igen!");
       throw err;
-    });
+    }
   };
   return (
     <form onSubmit={handleSubmit} className="exercise-form">
