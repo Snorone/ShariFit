@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import "./Layout.css";
+import toast from "react-hot-toast";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,6 +9,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+
 
   const toggleMenu = () => {
     setMenuOpen((prev: any) => !prev);
@@ -29,16 +31,18 @@ export default function Layout({ children }: LayoutProps) {
         </button>
 
         <nav className={`app-nav ${menuOpen ? "open" : ""}`}>
-  <NavLink to="/" onClick={() => setMenuOpen(false)}>Start</NavLink>
-  <NavLink to="/profile" onClick={() => setMenuOpen(false)}>My Profile</NavLink>
-</nav>
+          <NavLink to="/" onClick={() => setMenuOpen(false)}>
+            Start
+          </NavLink>
+          <NavLink to="/profile" onClick={() => setMenuOpen(false)}>
+            My Profile
+          </NavLink>
+        </nav>
       </header>
       <main className="app-main">{children}</main>
 
       <footer className="app-footer">
-        <p>
-          &copy; {new Date().getFullYear()} Sharifit
-        </p>
+        <p>&copy; {new Date().getFullYear()} Sharifit</p>
       </footer>
     </div>
   );

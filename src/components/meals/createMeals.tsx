@@ -19,6 +19,7 @@ import {
   DESCENDIN_BY_FIELD,
   MEALS_COLLECTION,
 } from "../../utils/db-collection";
+import toast from "react-hot-toast";
 
 export default function createMeals() {
   const [meals, setMeals] = useState<Mealsen[]>([]);
@@ -55,19 +56,32 @@ export default function createMeals() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
     if (!newMeal.name) return alert("Ange ett namn på övningen!");
     if (!user) return alert("Du måste vara inloggad för att skapa övningar!");
-    await createMeal({
-      name: newMeal.name,
-      description: newMeal.description,
-      calories: newMeal.calories,
-      createdBy: user.uid,
-      createdAt: new Date().toISOString(),
-    }).catch((err) => {
+
+    try {
+      console.log("Skickar ny måltid till createMeal...");
+
+      await createMeal({
+        name: newMeal.name,
+        description: newMeal.description,
+        calories: newMeal.calories,
+        createdBy: user.uid,
+        createdAt: new Date().toISOString(),
+      });
+
+      toast.success("Måltiden skapades!");
+
+      setNewMeal({
+        name: "",
+        description: "",
+        calories: 0,
+      });
+    } catch (err) {
       console.error("Fel vid skapande av måltid:", err);
       alert("Något gick fel, försök igen!");
-      throw err;
-    });
+    }
   };
 
   return (

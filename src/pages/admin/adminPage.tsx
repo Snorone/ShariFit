@@ -1,45 +1,22 @@
 import React, { useEffect, useState, FormEvent } from "react";
-import { db, auth } from "../../firebase/config";
-import {
-  collection,
-  query,
-  onSnapshot,
-  orderBy,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
-import { createExercise } from "../../firebase/dbFunctions";
-import { Exercise } from "../../types";
 import "./admin.css";
 import { Role, useAuth } from "../../context/AuthContext";
-import {
-  CREATED_AT_FIELD,
-  DESCENDIN_BY_FIELD,
-  EXERCISES_COLLECTION,
-} from "../../utils/db-collection";
-import ExercisesPage from "../exercises/ExercisesPage";
 import CreateMeals from "../../components/meals/createMeals";
 import ShowMeals from "../../components/meals/showMeals";
 import CreateExercise from "../../pages/exercises/createExercise";
 import ShowExercise from "../../pages/exercises/showExercise";
-
-interface NewExercise {
-  name: string;
-  description: string;
-  muscleGroup: string;
-  type: "strength" | "cardio";
-}
+import CreateDailyMeal from "../../components/dailyMeals/createDailyMeal";
+import ShowDailyMeals from "../../components/dailyMeals/showDailyMeals";
 
 export default function AdminPage() {
-  const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [newExercise, setNewExercise] = useState<NewExercise>({
-    name: "",
-    description: "",
-    muscleGroup: "",
-    type: "strength",
-  });
-
   const { user } = useAuth();
+
+  const [activeSection, setActiveSection] = useState<
+    "exercises" | "meals" | null
+  >(null);
+  const [activeAction, setActiveAction] = useState<"create" | "show" | null>(
+    null
+  );
 
   if (user === null) {
     return <div>No user signed in.</div>;
@@ -53,13 +30,104 @@ export default function AdminPage() {
     <div className="admin-page">
       <h1 className="page-title">Adminpanel</h1>
 
-      <div className="exercise-list">
+      {/* <div className="exercise-list">
         <CreateExercise />
         <ShowExercise />
       </div>
       <div className="exercise-list">
         <CreateMeals />
         <ShowMeals />
+      </div> */}
+      {/* 🔹 Huvudmeny */}
+      {!activeSection && (
+        <div className="admin-buttons">
+          <button className="btn" onClick={() => setActiveSection("exercises")}>
+            🏋️ Hantera Övningar
+          </button>
+          <button className="btn" onClick={() => setActiveSection("meals")}>
+            🍽️ Hantera Måltider
+          </button>
+        </div>
+      )}
+
+      {/* 🔹 Övningar */}
+      {activeSection === "exercises" && (
+        <div className="admin-submenu">
+          <button
+            className={`btn-secondary ${
+              activeAction === "create" ? "active" : ""
+            }`}
+            onClick={() => setActiveAction("create")}
+          >
+            Skapa Övning
+          </button>
+          <button
+            className={`btn-secondary ${
+              activeAction === "show" ? "active" : ""
+            }`}
+            onClick={() => setActiveAction("show")}
+          >
+            Visa Övningar
+          </button>
+
+          {/* 🔙 Tillbaka */}
+          <button
+            className="btn-back"
+            onClick={() => {
+              setActiveSection(null);
+              setActiveAction(null);
+            }}
+          >
+            ⬅️ Tillbaka
+          </button>
+
+          <div className="admin-content">
+            {activeAction === "create" && <CreateExercise />}
+            {activeAction === "show" && <ShowExercise />}
+          </div>
+        </div>
+      )}
+
+      {/* 🔹 Måltider */}
+      {activeSection === "meals" && (
+        <div className="admin-submenu">
+          <button
+            className={`btn-secondary ${
+              activeAction === "create" ? "active" : ""
+            }`}
+            onClick={() => setActiveAction("create")}
+          >
+            Skapa Måltid
+          </button>
+          <button
+            className={`btn-secondary ${
+              activeAction === "show" ? "active" : ""
+            }`}
+            onClick={() => setActiveAction("show")}
+          >
+            Visa Måltider
+          </button>
+
+          {/* 🔙 Tillbaka */}
+          <button
+            className="btn-back"
+            onClick={() => {
+              setActiveSection(null);
+              setActiveAction(null);
+            }}
+          >
+            ⬅️ Tillbaka
+          </button>
+
+          <div className="admin-content">
+            {activeAction === "create" && <CreateMeals />}
+            {activeAction === "show" && <ShowMeals />}
+          </div>
+        </div>
+      )}
+      <div className="section">
+        <CreateDailyMeal />
+        <ShowDailyMeals />
       </div>
     </div>
   );

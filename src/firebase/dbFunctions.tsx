@@ -41,9 +41,6 @@ export async function createExercise({
   });
 }
 
-// ❌ Ta bort hela approveExercise-funktionen
-// (Den behövs inte längre)
-
 // 🔹 Skapa workout
 interface WorkoutInput {
   name: string;
@@ -117,6 +114,35 @@ export async function createMeal({ name, description, calories }: MealsInput) {
     name,
     description,
     calories,
+    createdBy: uid,
+    createdAt: serverTimestamp(),
+  });
+}
+// 🔹 Skapa en dagsplan för måltider
+interface DailyMealInput {
+  name: string;
+  description: string;
+  mealIds: string[];
+}
+
+export async function createDailyMeal({
+  name,
+  description,
+  mealIds,
+}: {
+  name: string;
+  description: string;
+  mealIds: string[];
+}) {
+  if (!auth.currentUser) {
+    throw new Error("User is not authenticated.");
+  }
+
+  const uid = auth.currentUser.uid;
+  return await addDoc(collection(db, "dailyMeals"), {
+    name,
+    description,
+    meals: mealIds,
     createdBy: uid,
     createdAt: serverTimestamp(),
   });

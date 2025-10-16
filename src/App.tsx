@@ -8,12 +8,14 @@ import Bmi from "./pages/bmi/Bmi";
 import Exercises from "./pages/exercises/ExercisesPage";
 import AdminPage from "./pages/admin/adminPage";
 import AdminRoute from "./components/adminRoute";
-import Meals from "./pages/meals/mealspage";
+import Meals from "./pages/meals/mealsPage";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <Router>
       <AuthProvider>
+        <Toaster position="top-center" reverseOrder={false} />
         <Layout>
           <Routes>
             <Route path="/" element={<Login />} />
