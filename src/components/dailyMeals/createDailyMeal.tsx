@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { createDailyMeal } from "../../firebase/dbFunctions";
 

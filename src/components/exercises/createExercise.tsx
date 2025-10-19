@@ -44,7 +44,7 @@ export default function CreateExercise() {
       toast.success("träning skapades!");
 
       setNewExercise({
-        name: "",1w
+        name: "",
         description: "",
         muscleGroup: "",
         type: "strength",

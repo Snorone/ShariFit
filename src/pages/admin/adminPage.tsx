@@ -3,8 +3,8 @@ import "./admin.css";
 import { Role, useAuth } from "../../context/AuthContext";
 import CreateMeals from "../../components/meals/createMeals";
 import ShowMeals from "../../components/meals/showMeals";
-import CreateExercise from "../../pages/exercises/createExercise";
-import ShowExercise from "../../pages/exercises/showExercise";
+import CreateExercise from "../../components/exercises/createExercise";
+import ShowExercise from "../../components/exercises/showExercise";
 import CreateDailyMeal from "../../components/dailyMeals/createDailyMeal";
 import ShowDailyMeals from "../../components/dailyMeals/showDailyMeals";
 
@@ -29,16 +29,6 @@ export default function AdminPage() {
   return (
     <div className="admin-page">
       <h1 className="page-title">Adminpanel</h1>
-
-      {/* <div className="exercise-list">
-        <CreateExercise />
-        <ShowExercise />
-      </div>
-      <div className="exercise-list">
-        <CreateMeals />
-        <ShowMeals />
-      </div> */}
-      {/* 🔹 Huvudmeny */}
       {!activeSection && (
         <div className="admin-buttons">
           <button className="btn" onClick={() => setActiveSection("exercises")}>

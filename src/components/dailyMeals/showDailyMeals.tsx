@@ -1,45 +1,54 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs, getDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "../../firebase/config";
 
 export default function ShowDailyMeals() {
   const [dailyMeals, setDailyMeals] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchDailyMeals = async () => {
-      const snapshot = await getDocs(collection(db, "dailyMeals"));
+    // const fetchDailyMeals = async () => {
+    // const snapshot = await getDocs(collection(db, "dailyMeals"));
+    const unsubscribe = onSnapshot(
+      collection(db, "dailyMeals"),
+      async (snapshot) => {
+        const mealsData = await Promise.all(
+          snapshot.docs.map(async (d) => {
+            const data = d.data();
 
-      const mealsData = await Promise.all(
-        snapshot.docs.map(async (d) => {
-          const data = d.data();
+            // 🔹 Hantera både string-ID:n och DocumentReference
+            const mealIds = (data.meals || []).map((m: any) =>
+              typeof m === "string" ? m : m.id
+            );
 
-          // 🔹 Hantera både string-ID:n och DocumentReference
-          const mealIds = (data.meals || []).map((m: any) =>
-            typeof m === "string" ? m : m.id
-          );
+            const mealDetails = await Promise.all(
+              mealIds.map(async (mealId: string) => {
+                const mealDoc = await getDoc(doc(db, "meals", mealId));
+                return mealDoc.exists()
+                  ? { id: mealDoc.id, ...mealDoc.data() }
+                  : null;
+              })
+            );
 
-          const mealDetails = await Promise.all(
-            mealIds.map(async (mealId: string) => {
-              const mealDoc = await getDoc(doc(db, "meals", mealId));
-              return mealDoc.exists()
-                ? { id: mealDoc.id, ...mealDoc.data() }
-                : null;
-            })
-          );
+            return {
+              id: d.id,
+              name: data.name,
+              description: data.description,
+              meals: mealDetails.filter(Boolean),
+            };
+          })
+        );
 
-          return {
-            id: d.id,
-            name: data.name,
-            description: data.description,
-            meals: mealDetails.filter(Boolean),
-          };
-        })
-      );
+        setDailyMeals(mealsData);
+      }
+    );
 
-      setDailyMeals(mealsData);
-    };
-
-    fetchDailyMeals();
+    return () => unsubscribe();
   }, []);
 
   return (
