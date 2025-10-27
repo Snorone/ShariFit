@@ -30,9 +30,9 @@ const Profile = () => {
         <p>{user.email}</p>
 
         <div className="profile-buttons">
-          <button onClick={() => navigate("/exercises")}>
+          {/* <button onClick={() => navigate("/exercises")}>
             📋 Mina övningar
-          </button>
+          </button> */}
           <button onClick={() => navigate("/meals")}> 🍽️ Mina måltider</button>
           <button onClick={() => navigate("/bmi")}>📊 BMI & hälsa</button>
           <button onClick={() => navigate("/workouts")}>

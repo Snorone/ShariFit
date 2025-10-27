@@ -46,14 +46,12 @@ interface WorkoutInput {
   name: string;
   description: string;
   exerciseIds: string[];
-  isPublic: boolean;
 }
 
 export async function createWorkout({
   name,
   description,
   exerciseIds,
-  isPublic,
 }: WorkoutInput) {
   if (!auth.currentUser) {
     throw new Error("User is not authenticated.");
@@ -65,7 +63,6 @@ export async function createWorkout({
     description,
     exerciseIds,
     createdBy: uid,
-    public: isPublic,
     createdAt: serverTimestamp(),
   });
 }
@@ -118,6 +115,7 @@ export async function createMeal({ name, description, calories }: MealsInput) {
     createdAt: serverTimestamp(),
   });
 }
+
 // 🔹 Skapa en dagsplan för måltider
 interface DailyMealInput {
   name: string;
@@ -143,6 +141,29 @@ export async function createDailyMeal({
     name,
     description,
     meals: mealIds,
+    createdBy: uid,
+    createdAt: serverTimestamp(),
+  });
+}
+
+export async function createWeeklyMeal({
+  name,
+  description,
+  dailyMealIds,
+}: {
+  name: string;
+  description: string;
+  dailyMealIds: string[];
+}) {
+  if (!auth.currentUser) {
+    throw new Error("User is not authenticated.");
+  }
+
+  const uid = auth.currentUser.uid;
+  return await addDoc(collection(db, "weeklyMeals"), {
+    name,
+    description,
+    dailyMealIds: dailyMealIds,
     createdBy: uid,
     createdAt: serverTimestamp(),
   });
